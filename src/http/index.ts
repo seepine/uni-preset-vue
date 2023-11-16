@@ -3,7 +3,7 @@
 import Request from 'luch-request'
 import { useUserStore } from '@/store/user'
 
-export const createHttp = () => {
+export const createHttp = (): Request => {
   const mode = import.meta.env.MODE
   const userStore = useUserStore()
   switch (mode) {
@@ -24,7 +24,7 @@ export const createHttp = () => {
 
   http.interceptors.request.use(
     (config) => {
-      if (userStore.user && userStore.user.token) {
+      if (userStore.user !== undefined && userStore.user.token.length > 0) {
         config.header = {
           ...config.header,
           Authorization: `Bearer ${userStore.user.token}`
@@ -33,46 +33,45 @@ export const createHttp = () => {
       /* return Promise.reject(config) 会取消本次请求 */
       return config
     },
-    (config) => {
+    async (config) => {
       console.error('interceptors request err', config)
-      return Promise.reject(config)
+      return await Promise.reject(config)
     }
   )
   http.interceptors.response.use(
     (response) => {
-      return response.data.data || response.data
+      return response.data.data ?? response.data
     },
-    (response) => {
+    async (response) => {
       /*  对响应错误做点什么 （statusCode !== 200） */
       console.error('interceptors res err', response)
       const { config, data } = response
-      if (!config.header) {
+      if (config.header === undefined) {
         config.header = {}
       }
 
       let errMsg = '服务器维护中'
-      if (data) {
+      if (data !== undefined) {
         if (data.code === 0) {
-          return Promise.resolve(data.data)
+          return await Promise.resolve(data.data)
         }
         errMsg = data.code > 0 ? data.msg : data
       }
       if (response.statusCode === 401 || errMsg === 'Unauthorized') {
         config.header.toast = 'false'
         userStore.logout()
-        uni.reLaunch({ url: '/pages/index/index' })
+        await uni.reLaunch({ url: '/pages/index/index' })
       }
 
       if (config.header.toast !== 'false') {
-        uni.showToast({
+        await uni.showToast({
           title: errMsg,
           icon: 'error'
         })
       }
-      return Promise.reject(errMsg)
+      return await Promise.reject(errMsg)
     }
   )
-  // @ts-ignore
   uni.http = http
   return http
 }

@@ -1,53 +1,53 @@
-import { HttpDownloadResponse, HttpRequestConfig } from 'luch-request'
+import { type HttpDownloadResponse, type HttpRequestConfig } from 'luch-request'
 
 type AnyObject = Record<string | number | symbol, any>
 type HttpPromise<T> = Promise<T>
 
 export interface Request {
-  middleware<T = any>(config: HttpRequestConfig): HttpPromise<T>
-  request<T = any>(config: HttpRequestConfig<UniApp.RequestTask>): HttpPromise<T>
-  get<T = any>(url: string, config?: HttpRequestConfig<UniApp.RequestTask>): HttpPromise<T>
-  upload<T = any>(url: string, config?: HttpRequestConfig<UniApp.UploadTask>): HttpPromise<T>
-  delete<T = any>(
+  middleware: <T = any>(config: HttpRequestConfig) => HttpPromise<T>
+  request: <T = any>(config: HttpRequestConfig<UniApp.RequestTask>) => HttpPromise<T>
+  get: <T = any>(url: string, config?: HttpRequestConfig<UniApp.RequestTask>) => HttpPromise<T>
+  upload: <T = any>(url: string, config?: HttpRequestConfig<UniApp.UploadTask>) => HttpPromise<T>
+  delete: <T = any>(
     url: string,
     data?: AnyObject,
     config?: HttpRequestConfig<UniApp.RequestTask>
-  ): HttpPromise<T>
-  head<T = any>(
+  ) => HttpPromise<T>
+  head: <T = any>(
     url: string,
     data?: AnyObject,
     config?: HttpRequestConfig<UniApp.RequestTask>
-  ): HttpPromise<T>
-  post<T = any>(
+  ) => HttpPromise<T>
+  post: <T = any>(
     url: string,
     data?: AnyObject,
     config?: HttpRequestConfig<UniApp.RequestTask>
-  ): HttpPromise<T>
-  put<T = any>(
+  ) => HttpPromise<T>
+  put: <T = any>(
     url: string,
     data?: AnyObject,
     config?: HttpRequestConfig<UniApp.RequestTask>
-  ): HttpPromise<T>
-  connect<T = any>(
+  ) => HttpPromise<T>
+  connect: <T = any>(
     url: string,
     data?: AnyObject,
     config?: HttpRequestConfig<UniApp.RequestTask>
-  ): HttpPromise<T>
-  options<T = any>(
+  ) => HttpPromise<T>
+  options: <T = any>(
     url: string,
     data?: AnyObject,
     config?: HttpRequestConfig<UniApp.RequestTask>
-  ): HttpPromise<T>
-  trace<T = any>(
+  ) => HttpPromise<T>
+  trace: <T = any>(
     url: string,
     data?: AnyObject,
     config?: HttpRequestConfig<UniApp.RequestTask>
-  ): HttpPromise<T>
-  download(
+  ) => HttpPromise<T>
+  download: (
     url: string,
     config?: HttpRequestConfig<UniApp.DownloadTask>
-  ): Promise<HttpDownloadResponse>
-  setConfig(onSend: (config: HttpRequestConfig) => HttpRequestConfig): void
+  ) => Promise<HttpDownloadResponse>
+  setConfig: (onSend: (config: HttpRequestConfig) => HttpRequestConfig) => void
 }
 
 declare global {

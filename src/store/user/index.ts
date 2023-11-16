@@ -9,19 +9,15 @@ const defaultUser: User = {
   avatarUrl: '/static/avatar.png',
   claims: {}
 }
-
 export const useUserStore = defineStore('user', {
   state: (): UserState => ({
-    user: uni.getStorageSync('userInfo') || defaultUser
+    user: uni.getStorageSync('userInfo') ?? defaultUser
   }),
   getters: {},
   actions: {
     login(val: User) {
       this.user = val
-      uni.setStorage({
-        key: 'userInfo',
-        data: val
-      })
+      uni.setStorageSync('userInfo', val)
     },
     logout() {
       this.user = defaultUser

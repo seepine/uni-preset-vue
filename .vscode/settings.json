@@ -1,0 +1,27 @@
+{
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": true
+  },
+  "emmet.showExpandedAbbreviation": "never",
+  "editor.minimap.enabled": false,
+  "editor.wordWrap": "on",
+  "files.associations": {
+    "*.nvue": "vue"
+  },
+  // 开启文件折叠
+  "explorer.fileNesting.enabled": true,
+  "explorer.fileNesting.expand": false,
+  "explorer.fileNesting.patterns": {
+    // 把大部分配置文件都折叠到package.json里
+    "package.json": ".*, index.html, pnpm-lock.yaml, *.js, *.d.ts, *.json, *.sh, *.lock"
+  },
+  // 隐藏某些文件或目录
+  "files.exclude": {
+    "**/.git": true,
+    "**/.svn": true,
+    "**/.hg": true,
+    "**/CVS": true,
+    "**/.DS_Store": true,
+    "**/Thumbs.db": true
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "recommendations": [
+    // volar
+    "Vue.volar",
+    "Vue.vscode-typescript-vue-plugin",
+    // editor
+    "EditorConfig.EditorConfig",
+    // prettier
+    "esbenp.prettier-vscode",
+    // eslint
+    "dbaeumer.vscode-eslint",
+    // package 包跳转
+    "ravenq.vscode-goto-node-modules",
+    // html 标签自动重命名
+    "formulahendry.auto-rename-tag",
+    // "uni-helper.uni-app-snippets-vscode",
+    "uni-helper.uni-app-schemas-vscode"
+  ]
+}

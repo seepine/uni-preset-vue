@@ -10,7 +10,12 @@ lerna-debug.log*
 node_modules
 .DS_Store
 dist
+dist-ssr
+
+# local env files
 *.local
+.env.local
+.env.*.local
 
 # Editor directories and files
 .idea
@@ -19,3 +24,11 @@ dist
 *.njsproj
 *.sln
 *.sw?
+
+# vuepress
+.temp
+.cache
+
+# lock
+package-lock.json
+yarn.lock

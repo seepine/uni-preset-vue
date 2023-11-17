@@ -13,6 +13,10 @@
     "ravenq.vscode-goto-node-modules",
     // html 标签自动重命名
     "formulahendry.auto-rename-tag",
+    // tailwindcss
+    "bradlc.vscode-tailwindcss",
+    // 彩虹插件
+    "oderwat.indent-rainbow",
     // "uni-helper.uni-app-snippets-vscode",
     "uni-helper.uni-app-schemas-vscode"
   ]

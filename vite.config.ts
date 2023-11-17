@@ -13,5 +13,10 @@ export default defineConfig({
         enabled: true
       }
     })
-  ]
+  ],
+  css: {
+    postcss: {
+      plugins: [require('tailwindcss'), require('autoprefixer')]
+    }
+  }
 })

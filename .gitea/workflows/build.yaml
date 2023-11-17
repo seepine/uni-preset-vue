@@ -1,0 +1,172 @@
+# 存在 secrets.WECHAT_UPLOAD_PRIVATE_KEY 时，会自动上传到小程序管理后台，robot1为生产，robot2为测试
+# 配置微信机器人通知 WECHAT_WORK_BOT_WEBHOOK
+
+name: Build
+
+on:
+  push:
+    tags:
+      - v*
+
+env:
+  RUNNER_TOOL_CACHE: /toolcache
+  DOCKER_REGISTRY: registry.cn-hangzhou.aliyuncs.com
+  DOCKER_USERNAME: rsjst
+
+jobs:
+  setup:
+    runs-on: ubuntu-latest
+    container: seepine/ubuntu:act
+    outputs:
+      REPO_NAME: ${{ steps.meta.outputs.REPO_NAME }}
+      REPO_VERSION: ${{ steps.meta.outputs.REPO_VERSION }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 1
+
+      - name: Setup Pnpm and Install
+        uses: seepine/action-setup-pnpm@v1
+
+      - name: Get Meta
+        id: meta
+        run: |
+          echo REPO_NAME=$(echo ${GITHUB_REPOSITORY} | awk -F"/" '{print $2}') >> $GITHUB_OUTPUT
+          echo REPO_VERSION=$(echo ${{ github.ref }} | awk -F"/" '{print $3}' | awk -F"v" '{print $2}') >> $GITHUB_OUTPUT
+
+  build-weixin-prod:
+    if: ${{ secrets.WECHAT_UPLOAD_PRIVATE_KEY != '' }}
+    needs: setup
+    runs-on: ubuntu-latest
+    container: seepine/ubuntu:act
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 1
+
+      - name: Setup Pnpm and Install
+        uses: seepine/action-setup-pnpm@v1
+
+      - name: Project Build
+        run: pnpm build:mp-weixin
+
+      - name: Miniprogram Ci Upload
+        uses: seepine/action-miniprogram-ci@v1
+        id: mp-ci
+        with:
+          project-path: ./dist/build/mp-weixin
+          private-key: ${{ secrets.WECHAT_UPLOAD_PRIVATE_KEY }}
+          robot: 1
+          version: ${{ needs.setup.outputs.REPO_VERSION }}
+          desc: '修复了一些已知问题'
+
+  build-weixin-test:
+    if: ${{ secrets.WECHAT_UPLOAD_PRIVATE_KEY != '' }}
+    needs: [setup,build-weixin-prod]
+    runs-on: ubuntu-latest
+    container: seepine/ubuntu:act
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 1
+
+      - name: Setup Pnpm and Install
+        uses: seepine/action-setup-pnpm@v1
+
+      - name: Project Test Build
+        run: pnpm build:mp-weixin -m test
+
+      - name: Miniprogram Ci Upload
+        uses: seepine/action-miniprogram-ci@v1
+        with:
+          project-path: ./dist/build/mp-weixin
+          private-key: ${{ secrets.WECHAT_UPLOAD_PRIVATE_KEY }}
+          robot: 2
+          version: ${{ needs.setup.outputs.REPO_VERSION }}
+          desc: '修复了一些已知问题(体验版)'
+
+  notification-weixin:
+    if: ${{ secrets.WECHAT_UPLOAD_PRIVATE_KEY != '' }}
+    needs: [setup,build-weixin-prod,build-weixin-test]
+    runs-on: ubuntu-latest
+    env:
+      REPO_NAME: ${{ needs.setup.outputs.REPO_NAME }}
+      REPO_VERSION: ${{ needs.setup.outputs.REPO_VERSION }}
+    steps:
+      - name: WeChat Work notification
+        uses: seepine/action-wechat-work@master
+        env:
+          WECHAT_WORK_BOT_WEBHOOK: ${{ secrets.WECHAT_WORK_BOT_WEBHOOK }}
+        if: ${{ env.WECHAT_WORK_BOT_WEBHOOK != '' }}
+        with:
+          msgtype: markdown
+          content: "${{ env.REPO_NAME }} upload to mini-program success.\n
+          > Tag: ${{ env.REPO_NAME }}:${{ env.REPO_VERSION }}"
+
+  build-h5-prod:
+    if: ${{ secrets.DOCKER_PASSWORD != '' }}
+    needs: setup
+    container:
+      image: seepine/ubuntu:act
+      volumes:
+        - ubuntu_dockercache:/opt/dockercache
+    env:
+      REPO_NAME: ${{ needs.setup.outputs.REPO_NAME }}
+      REPO_VERSION: ${{ needs.setup.outputs.REPO_VERSION }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 1
+
+      - name: Setup Pnpm and Install
+        uses: seepine/action-setup-pnpm@v1
+
+      - name: Project Build
+        run: pnpm build:h5
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+
+      - name: Set up Docker BuildX
+        uses: docker/setup-buildx-action@v2
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v2
+        with:
+          registry: ${{ env.DOCKER_REGISTRY }}
+          username: ${{ env.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build and push
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          file: ./docker/Dockerfile
+          platforms: |
+            linux/amd64
+            linux/arm64
+          push: true
+          tags: |
+            ${{ env.DOCKER_REGISTRY }}/${{ env.DOCKER_USERNAME }}/${{ env.REPO_NAME }}:latest
+            ${{ env.DOCKER_REGISTRY }}/${{ env.DOCKER_USERNAME }}/${{ env.REPO_NAME }}:${{ env.REPO_VERSION }}
+          cache-from: type=local,src=/opt/dockercache/.buildx-${{ env.REPO_NAME }}-cache
+          cache-to: type=local,dest=/opt/dockercache/.buildx-${{ env.REPO_NAME }}-cache-new,mode=max
+
+      - name: Rebuild docker cache
+        run: |
+          rm -rf /opt/dockercache/.buildx-${{ env.REPO_NAME }}-cache
+          mv /opt/dockercache/.buildx-${{ env.REPO_NAME }}-cache-new /opt/dockercache/.buildx-${{ env.REPO_NAME }}-cache
+
+      - name: WeChat Work notification
+        uses: seepine/action-wechat-work@master
+        env:
+          WECHAT_WORK_BOT_WEBHOOK: ${{ secrets.WECHAT_WORK_BOT_WEBHOOK }}
+        if: ${{ env.WECHAT_WORK_BOT_WEBHOOK != '' }}
+        with:
+          msgtype: markdown
+          content: "${{ env.REPO_NAME }} build docker image success.\n
+          > Tag: ${{ env.DOCKER_REGISTRY }}/${{ env.DOCKER_USERNAME }}/${{ env.REPO_NAME }}:${{ env.REPO_VERSION }}"

@@ -1,0 +1,103 @@
+# 存在 secrets.WECHAT_UPLOAD_PRIVATE_KEY 时，会自动上传并在pr里评论预览二维码
+
+name: Checks
+
+on:
+  - pull_request_target
+
+jobs:
+  setup:
+    runs-on: ubuntu-latest
+    container: seepine/ubuntu:act
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 1
+
+      - name: Setup Pnpm and Install
+        uses: seepine/action-setup-pnpm@v1
+
+  eslint:
+    needs: setup
+    runs-on: ubuntu-latest
+    container: seepine/ubuntu:act
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 1
+
+      - name: Setup Pnpm and Install
+        uses: seepine/action-setup-pnpm@v1
+
+      - name: Eslint Test
+        run: npx eslint --ext ".vue,.js,.jsx,.ts,.tsx" src/ --max-warnings=0
+
+  commit-lint:
+    needs: setup
+    runs-on: ubuntu-latest
+    container: seepine/ubuntu:act
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 10
+
+      - name: Setup Pnpm and Install
+        uses: seepine/action-setup-pnpm@v1
+
+      - name: Commit lint Test
+        run: npx commitlint --to HEAD --verbose
+
+  h5-build-test:
+    needs: setup
+    runs-on: ubuntu-latest
+    container: seepine/ubuntu:act
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 1
+
+      - name: Setup Pnpm and Install
+        uses: seepine/action-setup-pnpm@v1
+
+      - name: Build
+        run: pnpm run build:h5
+
+  weixin-build-preview:
+    if: ${{ secrets.WECHAT_UPLOAD_PRIVATE_KEY != '' }}
+    needs: setup
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 1
+
+      - name: Setup Pnpm and Install
+        uses: seepine/action-setup-pnpm@v1
+
+      - name: Test Build
+        run: pnpm build:mp-weixin -m test
+
+      - name: Miniprogram Ci Preview
+        uses: seepine/action-miniprogram-ci@v1
+        with:
+          mode: preview
+          project-path: ./dist/build/mp-weixin
+          private-key: ${{ secrets.WECHAT_UPLOAD_PRIVATE_KEY }}
+          robot: 3
+          output: |
+            **扫码预览**
+            ```
+            {qrcode}
+            ```
+            > 接口为测试环境后端，若后端接口有改动请先更新测试环境
+
+      - name: Create comment
+        uses: peter-evans/create-or-update-comment@v3
+        with:
+          issue-number: ${{ github.event.pull_request.number }}
+          body-path: output.txt

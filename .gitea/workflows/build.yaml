@@ -11,7 +11,7 @@ on:
 env:
   RUNNER_TOOL_CACHE: /toolcache
   DOCKER_REGISTRY: registry.cn-hangzhou.aliyuncs.com
-  DOCKER_USERNAME: rsjst
+  DOCKER_USERNAME: seepine
 
 jobs:
   setup:

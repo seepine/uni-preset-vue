@@ -13,12 +13,14 @@ export default defineConfig({
     uniTailwind(),
     eslint(),
     AutoImport({
+      dts: 'src/auto-imports.d.ts',
       imports: ['vue', 'uni-app'],
       eslintrc: {
         enabled: true
       }
     }),
     Components({
+      dts: 'src/components.d.ts',
       dirs: ['src/components']
     })
   ],

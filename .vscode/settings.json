@@ -13,7 +13,8 @@
   "explorer.fileNesting.expand": false,
   "explorer.fileNesting.patterns": {
     // 把大部分配置文件都折叠到package.json里
-    "package.json": ".*, index.html, pnpm-lock.yaml, *.js, *.d.ts, *.json, *.sh, *.lock, *.ts"
+    "package.json": ".*, index.html, pnpm-lock.yaml, *.js, *.d.ts, *.json, *.sh, *.lock, *.ts",
+    "main.ts": "*.d.ts"
   },
   // 隐藏某些文件或目录
   "files.exclude": {

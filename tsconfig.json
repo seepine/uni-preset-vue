@@ -15,9 +15,6 @@
     "src/**/*.tsx",
     "src/**/*.vue",
     "vite.config.ts",
-    "*.js",
-    "*.ts",
-    "*.d.ts",
     ".eslintrc.js"
   ]
 }

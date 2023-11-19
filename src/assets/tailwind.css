@@ -1,5 +1,5 @@
 /* 会引入重置标签元素的基本样式，小程序不支持去掉 */
-/* @tailwind base; */
+@tailwind base;
 @tailwind components;
 @tailwind utilities;
 /* Flexbox 布局 */

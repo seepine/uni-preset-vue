@@ -1,7 +1,7 @@
 <template>
-  <view class="content bg-gray-300">
+  <view class="content bg-gray-300 m-4 md:m-12 dark:bg-gray-700">
     <image class="logo" src="/static/logo.png" />
-    <view class="text-area">
+    <view class="text-area m-[20rpx]">
       <text class="title">{{ title }}</text>
     </view>
   </view>

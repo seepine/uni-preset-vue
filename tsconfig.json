@@ -17,6 +17,7 @@
     "vite.config.ts",
     "*.js",
     "*.ts",
-    "*.d.ts"
+    "*.d.ts",
+    ".eslintrc.js"
   ]
 }

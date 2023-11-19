@@ -34,6 +34,7 @@ module.exports = {
   rules: {
     'vue/multi-word-component-names': 'off',
     'prettier/prettier': 'error',
-    '@typescript-eslint/no-explicit-any': 'off'
+    '@typescript-eslint/no-explicit-any': 'off',
+    '@typescript-eslint/strict-boolean-expressions': 'off'
   }
 }

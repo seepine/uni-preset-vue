@@ -17,7 +17,9 @@
     "bradlc.vscode-tailwindcss",
     // 彩虹插件
     "oderwat.indent-rainbow",
-    // "uni-helper.uni-app-snippets-vscode",
-    "uni-helper.uni-app-schemas-vscode"
+    // uniapp
+    "uni-helper.uni-app-snippets-vscode",
+    "uni-helper.uni-app-schemas-vscode",
+    "uni-helper.uni-highlight-vscode"
   ]
 }

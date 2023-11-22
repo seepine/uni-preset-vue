@@ -1,17 +1,10 @@
 import type { Config } from 'tailwindcss'
-import { basePreset, elementPlusPreset, miniprogramBasePreset } from 'tailwind-extensions'
+import { basePreset, miniprogramBasePreset } from 'tailwind-extensions'
 import { isMp, isQuickapp } from '@uni-helper/uni-env'
 
 const presets: Config['presets'] = [basePreset]
 if (isMp || isQuickapp) {
-  presets.push(
-    elementPlusPreset({
-      baseSelectors: [':root', 'page']
-    }),
-    miniprogramBasePreset
-  )
-} else {
-  presets.push(elementPlusPreset())
+  presets.push(miniprogramBasePreset)
 }
 
 const config: Config = {
@@ -20,6 +13,9 @@ const config: Config = {
     extend: {}
   },
   plugins: [],
-  presets
+  presets,
+  corePlugins: {
+    preflight: !(isMp || isQuickapp)
+  }
 }
 export default config

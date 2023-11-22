@@ -92,8 +92,8 @@ devDependencies:
     specifier: ^0.1.1
     version: 0.1.1(typescript@4.9.5)
   '@uni-helper/vite-plugin-uni-tailwind':
-    specifier: ^0.13.1
-    version: 0.13.1(vite@4.1.4)
+    specifier: ~0.14.0
+    version: 0.14.0(typescript@4.9.5)(vite@4.1.4)
   '@vue/runtime-core':
     specifier: ~3.2.45
     version: 3.2.47
@@ -3824,10 +3824,6 @@ packages:
     resolution: {integrity: sha512-zuVdFrMJiuCDQUMCzQaD6KL28MjnqqN8XnAqiEq9PNm/hCPTSGfrXCOfwj1ow4LFb/tNymJPwsNbVePc1xFqrQ==}
     dev: true
 
-  /@uni-helper/uni-env@0.0.3:
-    resolution: {integrity: sha512-K6MEnmN7Dg+NnEkfUUhjaKc/rPVY7tcGdsVUKOlC1/z2E6H6zjSSTdJg8z+sVJtZ03Ff1G/MHz2PYDyAS6gjQQ==}
-    dev: true
-
   /@uni-helper/uni-env@0.1.1(typescript@4.9.5):
     resolution: {integrity: sha512-NGQMOyqCF8VAEi3wWbJLKRwqhMldmFvITMs0j/bvVJ2jjUwN+0ofpPF3aHakCGpuY577DRx4coVN2iYmCb75fw==}
     dependencies:
@@ -3842,19 +3838,27 @@ packages:
       - vitest
     dev: true
 
-  /@uni-helper/vite-plugin-uni-tailwind@0.13.1(vite@4.1.4):
-    resolution: {integrity: sha512-rwDyCF2V+l4x18T5dt85FzzwUT9vML0nKvz9jXAZlBz8M4mmLNgDxrAWwUrS/ha8JkapV/lF6o5Fa3zx3uh/ew==}
+  /@uni-helper/vite-plugin-uni-tailwind@0.14.0(typescript@4.9.5)(vite@4.1.4):
+    resolution: {integrity: sha512-hDf2MfjWOIDN/fkutsucvNxmkTDCpDaKpt93C4b6vgybnKjwTyA7Zb/LIrTJJay2xIM6DUhtvDF7uLgCwVr9qQ==}
     engines: {node: '>=14.18'}
     peerDependencies:
-      vite: ^2.0.0 || ^3.0.0 || ^4.0.0
+      rollup: ^2.0.0 || ^3.0.0 || ^4.0.0
+      vite: ^2.0.0 || ^3.0.0 || ^4.0.0 || ^5.0.0
+    peerDependenciesMeta:
+      rollup:
+        optional: true
     dependencies:
       '@babel/core': 7.23.3
-      '@uni-helper/uni-env': 0.0.3
+      '@uni-helper/uni-env': 0.1.1(typescript@4.9.5)
       '@vivaxy/wxml': 2.1.0
       postcss: 8.4.31
       vite: 4.1.4(@types/node@20.5.1)(sass@1.69.5)(terser@5.24.0)
     transitivePeerDependencies:
+      - eslint-import-resolver-typescript
+      - eslint-import-resolver-webpack
       - supports-color
+      - typescript
+      - vitest
     dev: true
 
   /@vitejs/plugin-legacy@4.1.1(terser@5.24.0)(vite@4.1.4):
